@@ -1,2 +1,3 @@
 # robot_programming
-Robot Programming project
+Robot Programming project: Localization with ICP
+
