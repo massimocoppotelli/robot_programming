@@ -30,14 +30,17 @@ Localizer2D localizer;
 
 int main(int argc, char** argv) {
   // Initialize ROS system
-  // TODO
+  // TODO 1
+  ros::init(argc, argv, "icp_localizer");
+
 
   // Create a NodeHandle to manage the node.
   // The namespace of the node is set to global
   ros::NodeHandle nh("/");
 
   // Create shared pointer for the Map object
-  // TODO
+  // TODO 2
+  map_ptr = std::make_shared<Map>();
 
   //
   /**
@@ -50,7 +53,15 @@ int main(int argc, char** argv) {
    * Advertise the following topic:
    * /odom_out [nav_msgs::Odometry]
    */
-  // TODO
+  // TODO 3
+  ros::Subscriber sub_map =
+      nh.subscribe("/map", 1, callback_map); // Subscribe to /map
+  ros::Subscriber sub_initialpose =
+      nh.subscribe("/initialpose", 1, callback_initialpose); // Subscribe to /initialpose
+  ros::Subscriber sub_scan =
+      nh.subscribe("/base_scan", 1, callback_scan); // Subscribe to /base_scan
+
+  pub_odom = nh.advertise<nav_msgs::Odometry>("/odom_out", 10);
 
   // Scan advertiser for visualization purposes
   pub_scan = nh.advertise<sensor_msgs::LaserScan>("/scan_out", 10);
