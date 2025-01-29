@@ -31,7 +31,7 @@ Localizer2D localizer;
 int main(int argc, char** argv) {
   // Initialize ROS system
   // TODO 1
-  ros::init(argc, argv, "icp_localizer");
+  ros::init(argc, argv, "icp_localization");
 
 
   // Create a NodeHandle to manage the node.
@@ -79,7 +79,15 @@ void callback_map(const nav_msgs::OccupancyGridConstPtr& msg_) {
   // set the localizer map accordingly
   // Remember to load the map only once during the execution of the map.
 
-  // TODO
+  // TODO 4
+
+  if (map_ptr && !map_ptr->initialized()) {
+    map_ptr->loadOccupancyGrid(msg_);
+    localizer.setMap(map_ptr);
+    ROS_INFO("Map loaded and set successfully.");
+  } else {
+    ROS_WARN("Map is already initialized. Ignoring subsequent map messages.");
+  }
 }
 
 void callback_initialpose(
@@ -90,21 +98,57 @@ void callback_initialpose(
    * You can check ros_bridge.h for helps :)
    */
 
-  // TODO
+  // TODO 5
+
+  // Extract the pose from the message
+  geometry_msgs::Pose pose = msg_->pose.pose;
+
+  // Log the received pose
+  ROS_INFO("Received InitialPose: Position (x=%.2f, y=%.2f), Orientation Quaternion (w=%.2f, x=%.2f, y=%.2f, z=%.2f)",
+           pose.position.x, pose.position.y,
+           pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
+
+  // Convert the pose to Eigen::Isometry2f
+  Eigen::Isometry2f initial_pose;
+  pose2isometry(pose, initial_pose);
+
+  // Log the converted isometry
+  ROS_INFO("Converted Initial Pose: Translation (x=%.2f, y=%.2f), Rotation Angle (theta=%.2f)",
+           initial_pose.translation().x(),
+           initial_pose.translation().y(),
+           Eigen::Rotation2Df(initial_pose.linear()).angle());
+
+  // Set the initial pose in the localizer
+  localizer.setInitialPose(initial_pose);
+  
 }
 
 void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
+  
+  // Log the received LaserScan message details
+  ROS_INFO("SCAN RECEIVED: time=%.2f, range_min=%.2f, range_max=%.2f, angle_increment=%.2f, angle_min=%.2f, angle_max=%.2f",
+           msg_->header.stamp.toSec(), msg_->range_min, msg_->range_max,
+           msg_->angle_increment, msg_->angle_min, msg_->angle_max);
+  
   /**
    * Convert the LaserScan message into a Localizer2D::ContainerType
    * [std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>>]
    */
-  // TODO
+  // TODO 6
+  
+  Localizer2D::ContainerType scan_points;
+  scan2eigen(msg_, scan_points);
+  
 
   /**
    * Set the laser parameters and process the incoming scan through the
    * localizer
    */
-  // TODO
+  // TODO 7
+
+  localizer.setLaserParams(msg_->range_min, msg_->range_max,
+                           msg_->angle_min, msg_->angle_max, msg_->angle_increment);
+  localizer.process(scan_points);
 
   /**
    * Send a transform message between FRAME_WORLD and FRAME_LASER.
@@ -117,20 +161,43 @@ void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
    * The timestamp of the message should be equal to the timestamp of the
    * received message (msg_->header.stamp)
    */
-  static tf2_ros::TransformBroadcaster br;
-  // TODO
+  // TODO 8
+  // Get the pose of the laser in the world frame
+  Eigen::Isometry2f laser_in_world = localizer.X();
+  ROS_INFO("Laser pose in world: Translation (x=%.2f, y=%.2f), Rotation (theta=%.2f)",
+           laser_in_world.translation().x(),
+           laser_in_world.translation().y(),
+           Eigen::Rotation2Df(laser_in_world.linear()).angle());
 
+  // Convert the pose to TransformStamped
+  geometry_msgs::TransformStamped transform_stamped;
+  isometry2transformStamped(laser_in_world, transform_stamped, FRAME_WORLD, FRAME_LASER, msg_->header.stamp);
+
+  // Broadcast the transform
+  static tf2_ros::TransformBroadcaster br;
+  br.sendTransform(transform_stamped);
+  ROS_INFO("Broadcasted transform: %s -> %s", FRAME_WORLD.c_str(), FRAME_LASER.c_str());
+  
   /**
    * Send a nav_msgs::Odometry message containing the current laser_in_world
    * transform.
    * You can use transformStamped2odometry to convert the previously computed
    * TransformStamped message to a nav_msgs::Odometry message.
    */
-  // TODO
+  // TODO 9
+
+  nav_msgs::Odometry odom_msg;
+  transformStamped2odometry(transform_stamped, odom_msg);
+  pub_odom.publish(odom_msg);
+  ROS_INFO("Published odometry: x=%.2f, y=%.2f, theta=%.2f",
+           odom_msg.pose.pose.position.x,
+           odom_msg.pose.pose.position.y,
+           tf2::getYaw(odom_msg.pose.pose.orientation));
 
   // Sends a copy of msg_ with FRAME_LASER set as frame_id
   // Used to visualize the scan attached to the current laser estimate.
   sensor_msgs::LaserScan out_scan = *msg_;
   out_scan.header.frame_id = FRAME_LASER;
   pub_scan.publish(out_scan);
+  ROS_INFO("Published LaserScan with frame_id: %s", FRAME_LASER.c_str());
 }
