@@ -15,6 +15,8 @@
 #include "map.h"
 #include "ros_bridge.h"
 
+#include <tf2/utils.h>  // needed for getYaw
+
 // Map callback definition
 void callback_map(const nav_msgs::OccupancyGridConstPtr&);
 // Initial pose callback definition
@@ -30,7 +32,7 @@ Localizer2D localizer;
 
 int main(int argc, char** argv) {
   // Initialize ROS system
-  // TODO 1
+  // TODO
   ros::init(argc, argv, "icp_localization");
 
 
@@ -39,7 +41,7 @@ int main(int argc, char** argv) {
   ros::NodeHandle nh("/");
 
   // Create shared pointer for the Map object
-  // TODO 2
+  // TODO
   map_ptr = std::make_shared<Map>();
 
   //
@@ -53,7 +55,7 @@ int main(int argc, char** argv) {
    * Advertise the following topic:
    * /odom_out [nav_msgs::Odometry]
    */
-  // TODO 3
+  // TODO
   ros::Subscriber sub_map =
       nh.subscribe("/map", 1, callback_map); // Subscribe to /map
   ros::Subscriber sub_initialpose =
@@ -79,7 +81,7 @@ void callback_map(const nav_msgs::OccupancyGridConstPtr& msg_) {
   // set the localizer map accordingly
   // Remember to load the map only once during the execution of the map.
 
-  // TODO 4
+  // TODO
 
   if (map_ptr && !map_ptr->initialized()) {
     map_ptr->loadOccupancyGrid(msg_);
@@ -98,7 +100,7 @@ void callback_initialpose(
    * You can check ros_bridge.h for helps :)
    */
 
-  // TODO 5
+  // TODO
 
   // Extract the pose from the message
   geometry_msgs::Pose pose = msg_->pose.pose;
@@ -134,7 +136,7 @@ void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
    * Convert the LaserScan message into a Localizer2D::ContainerType
    * [std::vector<Eigen::Vector2f, Eigen::aligned_allocator<Eigen::Vector2f>>]
    */
-  // TODO 6
+  // TODO
   
   Localizer2D::ContainerType scan_points;
   scan2eigen(msg_, scan_points);
@@ -144,7 +146,7 @@ void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
    * Set the laser parameters and process the incoming scan through the
    * localizer
    */
-  // TODO 7
+  // TODO
 
   localizer.setLaserParams(msg_->range_min, msg_->range_max,
                            msg_->angle_min, msg_->angle_max, msg_->angle_increment);
@@ -161,7 +163,7 @@ void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
    * The timestamp of the message should be equal to the timestamp of the
    * received message (msg_->header.stamp)
    */
-  // TODO 8
+  // TODO
   // Get the pose of the laser in the world frame
   Eigen::Isometry2f laser_in_world = localizer.X();
   ROS_INFO("Laser pose in world: Translation (x=%.2f, y=%.2f), Rotation (theta=%.2f)",
@@ -184,7 +186,7 @@ void callback_scan(const sensor_msgs::LaserScanConstPtr& msg_) {
    * You can use transformStamped2odometry to convert the previously computed
    * TransformStamped message to a nav_msgs::Odometry message.
    */
-  // TODO 9
+  // TODO
 
   nav_msgs::Odometry odom_msg;
   transformStamped2odometry(transform_stamped, odom_msg);
