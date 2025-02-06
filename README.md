@@ -7,7 +7,7 @@ Ensure that **ROS Noetic** is installed before proceeding.
 
 ### Map server
 
-Install the ros-noetic-map-server package:
+Install the `ros-noetic-map-server` package:
 
 ```sh
 sudo apt install ros-noetic-map-server
@@ -15,7 +15,7 @@ sudo apt install ros-noetic-map-server
 
 ### Stage-ROS
 
-Install the ros-noetic-stage-ros and ros-noetic-teleop-twist-keyboard packages:
+Install the `ros-noetic-stage-ros` and `ros-noetic-teleop-twist-keyboard` packages:
 
 ```sh
 sudo apt install ros-noetic-stage-ros ros-noetic-teleop-twist-keyboard
@@ -87,4 +87,6 @@ In **RViz**, set the **initial pose** of the robot by selecting **"2D Pose Estim
 To set the **orientation**, **click and drag** in the desired direction before releasing the mouse button.
 
 Use the simulator to move the robot and observe how the localization updates in real time.
+
+
 
