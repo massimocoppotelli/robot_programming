@@ -5,7 +5,7 @@ This repository contains the project for the Robot Programming exam. It implemen
 
 Ensure that ROS Noetic is installed before proceeding.
 
-### 1. Map server
+### Map server
 
 Install the ros-noetic-map-server package:
 
@@ -13,7 +13,7 @@ Install the ros-noetic-map-server package:
 sudo apt install ros-noetic-map-server
 ```
 
-### 2. Stage-ROS
+### Stage-ROS
 
 Install the ros-noetic-stage-ros and ros-noetic-teleop-twist-keyboard packages:
 
@@ -21,9 +21,9 @@ Install the ros-noetic-stage-ros and ros-noetic-teleop-twist-keyboard packages:
 sudo apt install ros-noetic-stage-ros ros-noetic-teleop-twist-keyboard
 ```
 
-### 3. Setting up the workspace
+## Setting up the workspace
 
-Create a ROS workspace and clone the repository:
+Create a *ROS workspace* and clone the repository:
 
 ```sh
 cd ~
@@ -38,5 +38,46 @@ Build the workspace:
 ```sh
 cd ~/icp_ws/
 catkin_make
+```
+
+## Running the project
+
+Before launching any node, open a terminal, navigate to the workspace, and source the environment:
+
+```sh
+cd ~/ROS_workspaces/icp_ws/
+source devel/setup.bash
+```
+
+### Terminal 1. Start the ROS master
+
+```sh
+roscore
+```
+
+### Terminal 2. Run the map server
+
+```sh
+cd src/02_icp_localization
+rosrun map_server map_server test_data/cappero_map.yaml
+```
+
+### Terminal 3. Launch RViz with the predefined configuration
+
+```sh
+cd src/02_icp_localization
+rviz -d test_data/rviz.rviz
+```
+
+### Terminal 4. Start the simulator
+
+```sh
+rosrun stage_ros stageros test_data/cappero.world
+```
+
+### Terminal 5. Run the localization node
+
+```sh
+rosrun icp_localization localizer_node
 ```
 
