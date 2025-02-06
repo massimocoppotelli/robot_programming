@@ -69,7 +69,7 @@ source devel/setup.bash
   rviz -d test_data/rviz.rviz
   ```
 
-Terminal 4.   Start the simulator
+**Terminal 4.**   Start the simulator
 
   ```sh
   rosrun stage_ros stageros test_data/cappero.world
