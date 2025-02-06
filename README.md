@@ -7,3 +7,8 @@ Ensure that ROS Noetic is installed before proceeding.
 
 ### 1. Map Server
 
+Install the ros-noetic-map-server package:
+
+sudo apt install ros-noetic-map-server
+
+
