@@ -5,7 +5,7 @@ This repository contains the project for the Robot Programming exam. It implemen
 
 Ensure that ROS Noetic is installed before proceeding.
 
-### 1. Map Server
+### 1. Map server
 
 Install the ros-noetic-map-server package:
 
@@ -13,4 +13,30 @@ Install the ros-noetic-map-server package:
 sudo apt install ros-noetic-map-server
 ```
 
+### 2. Stage-ROS
+
+Install the ros-noetic-stage-ros and ros-noetic-teleop-twist-keyboard packages:
+
+```sh
+sudo apt install ros-noetic-stage-ros ros-noetic-teleop-twist-keyboard
+```
+
+### 3. Setting up the workspace
+
+Create a ROS workspace and clone the repository:
+
+```sh
+cd ~
+mkdir -p ROS_workspaces/icp_ws/src
+cd ROS_workspaces/icp_ws/src
+catkin_init_workspace
+git clone https://github.com/massimocoppotelli/robot_programming.git
+```
+
+Build the workspace:
+
+```sh
+cd ~/icp_ws/
+catkin_make
+```
 
