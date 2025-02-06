@@ -83,6 +83,8 @@ source devel/setup.bash
 
 ### Testing
 
-In **RViz**, set the **initial pose** of the robot close to its actual position.
+In **RViz**, set the **initial pose** of the robot by selecting **"2D Pose Estimate"** from the toolbar, then clicking on the map at the robot's estimated position.
+To set the **orientation**, **click and drag** in the desired direction before releasing the mouse button.
+
 Use the simulator to move the robot and observe how the localization updates in real time.
 
