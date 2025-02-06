@@ -90,8 +90,5 @@ Use the simulator to move the robot and observe how the localization updates in 
 
 ### Example
 
-<p align="center">
-  <img src="https://github.com/massimocoppotelli/robot_programming/example_video.webm>
-</p>
-
+![Simulation Demo](example_output.gif)
 
