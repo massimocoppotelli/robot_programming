@@ -88,5 +88,10 @@ To set the **orientation**, **click and drag** in the desired direction before r
 
 Use the simulator to move the robot and observe how the localization updates in real time.
 
+### Example
+
+<p align="center">
+  <img src="https://github.com/massimocoppotelli/robot_programming/example_video.webm>
+</p>
 
 
