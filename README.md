@@ -9,6 +9,8 @@ Ensure that ROS Noetic is installed before proceeding.
 
 Install the ros-noetic-map-server package:
 
+```sh
 sudo apt install ros-noetic-map-server
+```
 
 
