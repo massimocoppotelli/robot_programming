@@ -72,6 +72,7 @@ source devel/setup.bash
 **Terminal 4.**   Start the simulator
 
   ```sh
+  cd src/02_icp_localization
   rosrun stage_ros stageros test_data/cappero.world
   ```
 
